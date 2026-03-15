@@ -3,16 +3,15 @@ import os
 import numpy as np
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
-from langchain_text_splitter import CharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter  
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 load_dotenv()
 
-vecPath = "vectorstore_index"   # where we save/load the FAISS index
+vecPath = "vectorstore_index"
 
 
-# helpers
 @st.cache_resource
 def load_embeddings():
     return HuggingFaceEmbeddings(
@@ -37,7 +36,6 @@ def load_vectorstore(embeddings):
 
 
 def get_all_chunks(vectorstore):
-    # Extract all stored text chunks from the FAISS docstore.
     docstore = vectorstore.docstore
     chunks = []
     for doc_id in vectorstore.index_to_docstore_id.values():
@@ -45,7 +43,6 @@ def get_all_chunks(vectorstore):
         if doc:
             chunks.append(doc.page_content)
     return chunks
-
 
 
 def main():
@@ -60,7 +57,6 @@ def main():
 
     embeddings = load_embeddings()
 
-    #  Sidebar: Upload & Build ─
     with st.sidebar:
         st.header("Build Vector Store")
         st.caption("Upload PDFs here to build & save a vector store for monitoring")
@@ -76,7 +72,6 @@ def main():
                 st.error("Upload at least one PDF!")
             else:
                 with st.spinner("Building..."):
-                    # Extract
                     text = ""
                     for pdf in pdf_docs:
                         reader = PdfReader(pdf)
@@ -85,7 +80,6 @@ def main():
                             if extracted:
                                 text += extracted
 
-                    # Chunk
                     splitter = CharacterTextSplitter(
                         separator="\n",
                         chunk_size=500,
@@ -94,7 +88,6 @@ def main():
                     )
                     chunks = splitter.split_text(text)
 
-                    # Embed & store
                     vs = FAISS.from_texts(texts=chunks, embedding=embeddings)
                     save_vectorstore(vs)
                     st.session_state.vectorstore = vs
@@ -102,7 +95,6 @@ def main():
 
         st.divider()
 
-        #load existing
         if st.button("Load Saved Vector Store"):
             vs = load_vectorstore(embeddings)
             if vs:
@@ -123,7 +115,6 @@ def main():
     vs = st.session_state.vectorstore
     chunks = get_all_chunks(vs)
 
-    #  Stats Row ─
     col1, col2, col3, col4 = st.columns(4)
     chunk_lengths = [len(c) for c in chunks]
 
@@ -134,10 +125,8 @@ def main():
 
     st.divider()
 
-    #  Tabs 
     tab1, tab2, tab3 = st.tabs(["browse chunks", "size distribution", "similarity search"])
 
-    # Tab 1: Browse all chunks
     with tab1:
         st.subheader("All Stored Text Chunks")
         search_filter = st.text_input("Filter chunks by keyword:", "")
@@ -153,7 +142,6 @@ def main():
             with st.expander(f"Chunk {i+1}  ({len(chunk)} chars)"):
                 st.text(chunk)
 
-    # Tab 2: Size distribution chart
     with tab2:
         st.subheader("Chunk Size Distribution")
 
@@ -166,23 +154,22 @@ def main():
         st.bar_chart(df.set_index("Chunk Index")["Size (chars)"])
 
         st.subheader("Size Breakdown")
-        bins = {"< 200": 0, "200–400": 0, "400–500": 0, "500–700": 0, "> 700": 0}
+        bins = {"< 200": 0, "200-400": 0, "400-500": 0, "500-700": 0, "> 700": 0}
         for l in chunk_lengths:
             if l < 200:
                 bins["< 200"] += 1
             elif l < 400:
-                bins["200–400"] += 1
+                bins["200-400"] += 1
             elif l < 500:
-                bins["400–500"] += 1
+                bins["400-500"] += 1
             elif l < 700:
-                bins["500–700"] += 1
+                bins["500-700"] += 1
             else:
                 bins["> 700"] += 1
 
         bin_df = pd.DataFrame(list(bins.items()), columns=["Range", "Count"])
         st.dataframe(bin_df, use_container_width=True)
 
-    # Tab 3: Similarity search tester
     with tab3:
         st.subheader("Test Similarity Search")
         st.caption("Type any question to see which chunks the model would retrieve")
@@ -194,10 +181,10 @@ def main():
             with st.spinner("Searching..."):
                 results = vs.similarity_search_with_score(query, k=k)
 
-            st.success(f"Top {k} most relevant chunks for: *\"{query}\"*")
+            st.success(f"Top {k} most relevant chunks for: \"{query}\"")
             for rank, (doc, score) in enumerate(results):
                 similarity_pct = max(0, 100 - score * 10)
-                st.markdown(f"**#{rank+1} — Similarity Score: `{score:.4f}`**")
+                st.markdown(f"**#{rank+1} - Similarity Score: `{score:.4f}`**")
                 st.progress(min(1.0, similarity_pct / 100))
                 with st.expander(f"View chunk ({len(doc.page_content)} chars)"):
                     st.text(doc.page_content)
