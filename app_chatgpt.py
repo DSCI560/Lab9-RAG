@@ -188,12 +188,12 @@ def handle_userinput(user_question):
 def main():
     load_dotenv()
 
-    hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
+    hf_token = os.getenv("HF_TOKEN", "")
     if not hf_token:
         st.error(
-            "HUGGINGFACEHUB_API_TOKEN is missing. "
+            "HF_TOKEN is missing. "
             "Get a free token at https://huggingface.co/settings/tokens "
-            "and add it to your .env file as HUGGINGFACEHUB_API_TOKEN=hf_..."
+            "and add it to your .env file as HF_TOKEN=hf_..."
         )
         return
 
