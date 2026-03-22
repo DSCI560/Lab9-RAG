@@ -39,7 +39,7 @@ from htmlTemplates import css, bot_template, user_template
 HF_ROUTER_BASE_URL = "https://router.huggingface.co/v1"
 # openai/gpt-oss-120b is the model from the link you shared
 # If you want faster responses use: "meta-llama/Llama-3.1-8B-Instruct"
-CHAT_MODEL = "openai/gpt-oss-20b"
+CHAT_MODEL = "openai/gpt-oss-120b"
 
 
 # ── Thin LangChain wrapper around the HF router (OpenAI-compatible) ───────────

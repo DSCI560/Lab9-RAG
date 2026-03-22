@@ -184,8 +184,9 @@ def main():
             st.success(f"Top {k} most relevant chunks for: \"{query}\"")
             for rank, (doc, score) in enumerate(results):
                 similarity_pct = max(0, 100 - score * 10)
-                st.markdown(f"**#{rank+1} - Similarity Score: `{score:.4f}`**")
-                st.progress(min(1.0, similarity_pct / 100))
+                st.markdown(f"**#{rank+1} - Distance Score: `{score:.4f}`**")
+                progress_value = float(min(1.0, similarity_pct / 100))
+                st.progress(progress_value)
                 with st.expander(f"View chunk ({len(doc.page_content)} chars)"):
                     st.text(doc.page_content)
 
