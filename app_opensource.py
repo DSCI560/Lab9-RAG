@@ -404,7 +404,7 @@ def main():
 
         if st.button("Process"):
             if not pdf_docs:
-                st.error("upload pdf")
+                st.error("Please upload at least one PDF.")
                 return
 
             st.session_state.chat_history = []
