@@ -52,8 +52,8 @@ css = '''
     padding-top: 0.2rem;
 }
 
-.chat-message.user .message { color: #c8d6f0; }
-.chat-message.bot  .message { color: #c8f0d0; }
+.chat-message.user .message { color: #708c82; }
+.chat-message.bot  .message { color: #bcc1c4; }
 
 .chat-message .message code {
     font-family: 'IBM Plex Mono', monospace;
@@ -68,7 +68,7 @@ css = '''
 bot_template = '''
 <div class="chat-message bot">
     <div class="avatar">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Chatbot_img.png">
+        <img src="https://png.pngtree.com/png-clipart/20240828/original/pngtree-beautiful-logo-with-the-character-of-a-female-anime-png-image_15866623.png">
     </div>
     <div class="message">{{MSG}}</div>
 </div>
