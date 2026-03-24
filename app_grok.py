@@ -1,23 +1,3 @@
-"""
-app_grok.py — PDF Chatbot using HuggingFace Inference Providers (Llama-3 via Groq backend)
-============================================================================================
-Replaces the Groq API key with a single HuggingFace token.
-HuggingFace routes your request to Groq's backend automatically using your HF free credits.
-
-Model used: meta-llama/Llama-3.1-8B-Instruct  routed via Groq (fast + free on HF)
-Embeddings: sentence-transformers/all-MiniLM-L6-v2 (free, local, no API key needed)
-
-Setup:
-1. Go to https://huggingface.co/settings/tokens  ->  New token  ->  "Make calls to Inference Providers"
-2. Add to your .env file:
-       HF_TOKEN=hf_your_token_here
-3. pip install -r requirements.txt
-4. streamlit run app_grok.py
-
-Note: ":groq" suffix tells HF to route to Groq's backend (fastest).
-      If Groq is busy, remove ":groq" and HF auto-selects the next best provider.
-"""
-
 import os
 import streamlit as st
 from dotenv import load_dotenv
@@ -38,14 +18,10 @@ from langchain_core.outputs import ChatGeneration, ChatResult
 from htmlTemplates import css, bot_template, user_template
 
 HF_ROUTER_BASE_URL = "https://router.huggingface.co/v1"
-# ":groq" routes to Groq's backend — same speed as the original app_grok.py, but uses HF token
-# Other free options:
-#   "meta-llama/Llama-3.1-70B-Instruct:groq"   — better quality, slower
-#   "mistralai/Mixtral-8x7B-Instruct-v0.1"     — good for long documents
 CHAT_MODEL = "meta-llama/Llama-4-Scout-17B-16E-Instruct:groq"
 
 
-# ── Thin LangChain wrapper around the HF router ───────────────────────────────
+#Thin LangChain wrapper around the HF router 
 class HFRouterChat(BaseChatModel):
     model_name: str = CHAT_MODEL
     temperature: float = 0.0
@@ -183,7 +159,7 @@ def handle_userinput(user_question):
             st.write(bot_template.replace("{{MSG}}", msg["content"]), unsafe_allow_html=True)
 
 
-# Main 
+#main streamlit app 
 def main():
     load_dotenv()
 

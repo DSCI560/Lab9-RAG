@@ -21,7 +21,6 @@ from typing import Any, List, Optional, Tuple
 from htmlTemplates import css, bot_template, user_template
 
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-# Keep defaults CPU-friendly; users can override in .env with OPEN_SOURCE_MODEL_CANDIDATES.
 DEFAULT_MODEL_CANDIDATES = "google/flan-t5-base,google/flan-t5-small"
 
 
@@ -354,7 +353,7 @@ def handle_userinput(user_question):
 
 
 
-# 9. Main
+#main streamlit app
 
 def main():
     load_dotenv()
